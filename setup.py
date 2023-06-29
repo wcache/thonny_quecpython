@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='thonny-quecpython',
-    version='0.0.2',
+    version='0.0.3',
     description='quecpython programing kits',
     python_requires='>=3.7',
     license="MIT License",
