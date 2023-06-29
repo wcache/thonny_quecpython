@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: thonny-quecpython
+Version: 0.0.2
+Summary: quecpython programing kits
+Home-page: http://github.com/quecpython
+Author: dustin.wei
+Author-email: dustin.wei@quectel.com
+License: MIT License
+Keywords: QuecPython,quecpython,QuecPython Kits,quecpython kits
+Platform: windows
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
