@@ -1,5 +1,4 @@
 """QuecPython编程套件主窗口"""
-import time
 from threading import Thread
 from pathlib import Path
 from logging import getLogger
@@ -22,43 +21,42 @@ class QuecView(tk.Frame):
         kwargs.setdefault('borderwidth', 10)
         super().__init__(*args, **kwargs)
 
-        # >>> 串口
-        label_frame1 = tk.LabelFrame(master=self, text='串口参数设置')
-        label_frame1.grid(row=0, column=0, columnspan=13, sticky=tk.NSEW, pady=(0, 10))
+        # >>> 固件下载
+        label_frame1 = tk.LabelFrame(master=self, text='固件下载')
+        label_frame1.pack(fill=tk.X, expand=True)
+        label_frame1.grid_columnconfigure(0, weight=1)
+        label_frame1.grid_columnconfigure(1, weight=100)
+        label_frame1.grid_columnconfigure(11, weight=1)
+        label_frame1.grid_columnconfigure(12, weight=1)
 
         label1 = tk.Label(label_frame1, text='串口:')
-        label1.grid(row=0, column=0, sticky=tk.NSEW, padx=(5, 5), pady=(5, 5))
+        label1.grid(row=0, column=0, sticky=tk.W, padx=(5, 5), pady=(5, 5))
         self.serial_list = ttk.Combobox(master=label_frame1, postcommand=self.list_valid_ports)
-        self.serial_list.grid(row=0, column=1, ipadx=40, sticky=tk.NSEW, padx=(5, 5), pady=(5, 5))
+        self.serial_list.grid(row=0, column=1, ipadx=40, sticky=tk.W, padx=(5, 5), pady=(5, 5))
         self.list_valid_ports()
-        # <<<
 
-        # >>> 固件下载
-        label_frame2 = tk.LabelFrame(master=self, text='固件下载')
-        label_frame2.grid(row=1, column=0, columnspan=13, sticky=tk.NSEW, pady=(0, 10))
-
-        label2 = tk.Label(label_frame2, text='固件文件:')
-        label2.grid(row=0, column=0, sticky=tk.NSEW, padx=(5, 5), pady=(5, 5))
+        label2 = tk.Label(label_frame1, text='固件文件:')
+        label2.grid(row=1, column=0, sticky=tk.W, padx=(5, 5), pady=(5, 5))
         self.firmware_file_path_stringvar = tk.StringVar()
-        entry1 = tk.Entry(label_frame2, textvariable=self.firmware_file_path_stringvar, width=100, state='readonly')
-        entry1.grid(row=0, column=1, columnspan=10, sticky=tk.NSEW, padx=(5, 5), pady=(5, 5))
-        self.button1 = tk.Button(label_frame2, text='选择路径', command=self.get_firmware_file_path_handler)
-        self.button1.grid(row=0, column=11, sticky=tk.NSEW, padx=(5, 5), pady=(5, 5))
-        self.button2 = tk.Button(label_frame2, text='下载固件', command=self.download_firmware_thread_worker)
-        self.button2.grid(row=0, column=12, sticky=tk.NSEW, padx=(5, 5), pady=(5, 5))
+        entry1 = tk.Entry(label_frame1, textvariable=self.firmware_file_path_stringvar, width=100, state='readonly')
+        entry1.grid(row=1, column=1, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.button1 = tk.Button(label_frame1, text='选择路径', command=self.get_firmware_file_path_handler)
+        self.button1.grid(row=1, column=2, sticky=tk.EW, padx=(5, 5), pady=(5, 5))
+        self.button2 = tk.Button(label_frame1, text='下载固件', command=self.download_firmware_thread_worker)
+        self.button2.grid(row=1, column=3, sticky=tk.W, padx=(5, 5), pady=(5, 5))
 
-        label3 = tk.Label(label_frame2, text='下载进度:')
-        label3.grid(row=1, column=0, sticky=tk.NSEW, padx=(5, 5), pady=(5, 5))
-        self.bar = ttk.Progressbar(master=label_frame2, maximum=100)
-        self.bar.grid(row=1, column=1, columnspan=10, sticky=tk.NSEW, padx=(5, 5), pady=(5, 5))
+        label3 = tk.Label(label_frame1, text='下载进度:')
+        label3.grid(row=2, column=0, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.bar = ttk.Progressbar(master=label_frame1, maximum=100)
+        self.bar.grid(row=2, column=1, sticky=tk.EW, padx=(5, 5), pady=(5, 5))
         self.progress_text_var = tk.StringVar()
         self.progress_text_var.set('0%')
-        progress_entry = tk.Label(label_frame2, textvariable=self.progress_text_var)
-        progress_entry.grid(row=1, column=11, sticky=tk.NSEW, padx=(5, 5), pady=(5, 5))
+        progress_entry = tk.Label(label_frame1, textvariable=self.progress_text_var)
+        progress_entry.grid(row=2, column=2, sticky=tk.W, padx=(5, 5), pady=(5, 5))
         self.log_text_var = tk.StringVar()
         self.log_text_var.set('就绪')
-        log_entry = tk.Label(label_frame2, textvariable=self.log_text_var)
-        log_entry.grid(row=1, column=12, sticky=tk.NSEW, padx=(5, 5), pady=(5, 5))
+        log_entry = tk.Label(label_frame1, textvariable=self.log_text_var)
+        log_entry.grid(row=2, column=3, sticky=tk.W, padx=(5, 5), pady=(5, 5))
         # <<<
 
     def list_valid_ports(self):
