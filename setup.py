@@ -1,10 +1,18 @@
 from setuptools import setup, find_packages
 
 
+def readme():
+    with open('README.md', encoding='utf-8') as f:
+        content = f.read()
+    return content
+
+
 setup(
     name='thonny-quecpython',
     version='0.0.4',
     description='quecpython programing kits',
+    long_description=readme(),
+    long_description_content_type='text/markdown',
     python_requires='>=3.7',
     license="MIT License",
     author='dustin.wei',
