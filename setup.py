@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='thonny-quecpython',
-    version='0.0.4',
+    version='0.1.0',
     description='quecpython programing kits',
     long_description=readme(),
     long_description_content_type='text/markdown',
