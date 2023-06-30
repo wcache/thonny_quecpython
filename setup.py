@@ -36,6 +36,7 @@ setup(
         ],
     },
     install_requires=[
-        'thonny>=4.1.1'
+        'thonny>=4.1.1',
+        'Pypubsub>=4.0.3'
     ],
 )
