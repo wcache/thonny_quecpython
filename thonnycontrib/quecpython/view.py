@@ -121,17 +121,6 @@ class QuecView(tk.Frame):
         # <<<
 
     def open_serial_handler(self):
-        # if self.serial is not None:
-        #     if self.serial.isOpen():
-        #         self.serial.close()
-        #         self.open_serial_button['text'] = '打开串口'
-        #         self.set_com_widgets_state(tk.ACTIVE)
-        #     else:
-        #         self.serial.open()
-        #         self.open_serial_button['text'] = '关闭串口'
-        #         self.set_com_widgets_state(tk.DISABLED)
-        # else:
-
         if self.serial is None:
             # TODO: 流控未处理: self.flow_control_combobox
             self.serial = Serial(
