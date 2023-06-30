@@ -2,6 +2,7 @@
 from threading import Thread
 from pathlib import Path
 from logging import getLogger
+from serial import Serial
 from serial.tools import list_ports
 import tkinter as tk
 from tkinter import ttk
@@ -22,41 +23,71 @@ class QuecView(tk.Frame):
         super().__init__(*args, **kwargs)
 
         # >>> 固件下载
-        label_frame1 = tk.LabelFrame(master=self, text='固件下载')
-        label_frame1.pack(fill=tk.X, expand=True)
-        label_frame1.grid_columnconfigure(0, weight=1)
-        label_frame1.grid_columnconfigure(1, weight=100)
-        label_frame1.grid_columnconfigure(11, weight=1)
-        label_frame1.grid_columnconfigure(12, weight=1)
+        fw_label_frame = tk.LabelFrame(master=self, text='固件下载')
+        fw_label_frame.pack(anchor=tk.NW, expand=True)
+        for index in range(14):
+            fw_label_frame.columnconfigure(index, weight=1)
 
-        label1 = tk.Label(label_frame1, text='串口:')
-        label1.grid(row=0, column=0, sticky=tk.W, padx=(5, 5), pady=(5, 5))
-        self.serial_list = ttk.Combobox(master=label_frame1, postcommand=self.list_valid_ports)
-        self.serial_list.grid(row=0, column=1, ipadx=40, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        serial_label = tk.Label(fw_label_frame, text='串口:')
+        serial_label.grid(row=0, column=0, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.serial_combobox = ttk.Combobox(master=fw_label_frame, postcommand=self.list_valid_ports)
+        self.serial_combobox.grid(row=0, column=1, ipadx=40, sticky=tk.W, padx=(5, 5), pady=(5, 5))
         self.list_valid_ports()
 
-        label2 = tk.Label(label_frame1, text='固件文件:')
-        label2.grid(row=1, column=0, sticky=tk.W, padx=(5, 5), pady=(5, 5))
-        self.firmware_file_path_stringvar = tk.StringVar()
-        entry1 = tk.Entry(label_frame1, textvariable=self.firmware_file_path_stringvar, width=100, state='readonly')
-        entry1.grid(row=1, column=1, sticky=tk.W, padx=(5, 5), pady=(5, 5))
-        self.button1 = tk.Button(label_frame1, text='选择路径', command=self.get_firmware_file_path_handler)
-        self.button1.grid(row=1, column=2, sticky=tk.EW, padx=(5, 5), pady=(5, 5))
-        self.button2 = tk.Button(label_frame1, text='下载固件', command=self.download_firmware_thread_worker)
-        self.button2.grid(row=1, column=3, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        baudrate_label = tk.Label(fw_label_frame, text='波特率:')
+        baudrate_label.grid(row=0, column=2, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.baudrate_combobox = ttk.Combobox(master=fw_label_frame, values=Serial.BAUDRATES, width=7)
+        self.baudrate_combobox.set('115200')
+        self.baudrate_combobox.grid(row=0, column=3, sticky=tk.W, padx=(5, 5), pady=(5, 5))
 
-        label3 = tk.Label(label_frame1, text='下载进度:')
-        label3.grid(row=2, column=0, sticky=tk.W, padx=(5, 5), pady=(5, 5))
-        self.bar = ttk.Progressbar(master=label_frame1, maximum=100)
-        self.bar.grid(row=2, column=1, sticky=tk.EW, padx=(5, 5), pady=(5, 5))
-        self.progress_text_var = tk.StringVar()
-        self.progress_text_var.set('0%')
-        progress_entry = tk.Label(label_frame1, textvariable=self.progress_text_var)
-        progress_entry.grid(row=2, column=2, sticky=tk.W, padx=(5, 5), pady=(5, 5))
-        self.log_text_var = tk.StringVar()
-        self.log_text_var.set('就绪')
-        log_entry = tk.Label(label_frame1, textvariable=self.log_text_var)
-        log_entry.grid(row=2, column=3, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        stopbits_label = tk.Label(fw_label_frame, text='停止位:')
+        stopbits_label.grid(row=0, column=4, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.stopbits_combobox = ttk.Combobox(master=fw_label_frame, values=Serial.STOPBITS, width=5)
+        self.stopbits_combobox.set('1')
+        self.stopbits_combobox.grid(row=0, column=5, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+
+        parity_label = tk.Label(fw_label_frame, text='校验:')
+        parity_label.grid(row=0, column=6, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.parity_combobox = ttk.Combobox(master=fw_label_frame, values=Serial.PARITIES, width=5)
+        self.parity_combobox.set('N')
+        self.parity_combobox.grid(row=0, column=7, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+
+        bytesize_label = tk.Label(fw_label_frame, text='数据位:')
+        bytesize_label.grid(row=0, column=8, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.bytesize_combobox = ttk.Combobox(master=fw_label_frame, values=Serial.BYTESIZES, width=5)
+        self.bytesize_combobox.set('8')
+        self.bytesize_combobox.grid(row=0, column=9, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+
+        flow_control_label = tk.Label(fw_label_frame, text='流控:')
+        flow_control_label.grid(row=0, column=10, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.flow_control_combobox = ttk.Combobox(master=fw_label_frame, values=['No', 'HW', 'SW'], width=5)
+        self.flow_control_combobox.set('No')
+        self.flow_control_combobox.grid(row=0, column=11, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+
+        fw_file_path_label = tk.Label(fw_label_frame, text='固件文件:')
+        fw_file_path_label.grid(row=1, column=0, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.firmware_file_path_stringvar = tk.StringVar()
+        fw_file_path_entry = tk.Entry(fw_label_frame, textvariable=self.firmware_file_path_stringvar, state='readonly')
+        fw_file_path_entry.grid(row=1, column=1, columnspan=11, sticky=tk.EW, padx=(5, 5), pady=(5, 5))
+        self.fw_file_choose_button = tk.Button(fw_label_frame, text='选择路径',
+                                               command=self.get_firmware_file_path_handler)
+        self.fw_file_choose_button.grid(row=1, column=12, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.fw_download_button = tk.Button(fw_label_frame, text='下载固件',
+                                            command=self.download_firmware_thread_worker)
+        self.fw_download_button.grid(row=1, column=13, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+
+        progress_label = tk.Label(fw_label_frame, text='下载进度:')
+        progress_label.grid(row=2, column=0, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.bar = ttk.Progressbar(master=fw_label_frame, maximum=100)
+        self.bar.grid(row=2, column=1, columnspan=11, sticky=tk.EW, padx=(5, 5), pady=(5, 5))
+        self.progress_stringvar = tk.StringVar()
+        self.progress_stringvar.set('0%')
+        progress_entry = tk.Label(fw_label_frame, textvariable=self.progress_stringvar)
+        progress_entry.grid(row=2, column=12, sticky=tk.W, padx=(5, 5), pady=(5, 5))
+        self.log_stringvar = tk.StringVar()
+        self.log_stringvar.set('就绪')
+        log_entry = tk.Label(fw_label_frame, textvariable=self.log_stringvar)
+        log_entry.grid(row=2, column=13, sticky=tk.W, padx=(5, 5), pady=(5, 5))
         # <<<
 
     def list_valid_ports(self):
@@ -64,12 +95,12 @@ class QuecView(tk.Frame):
         for p in list_ports.comports():
             rv.append("{}-{}".format(p.device, p.description))
 
-        self.serial_list['value'] = rv
-        current_port_str = self.serial_list.get()
+        self.serial_combobox['value'] = rv
+        current_port_str = self.serial_combobox.get()
         if current_port_str in rv:
-            self.serial_list.set(current_port_str)
+            self.serial_combobox.set(current_port_str)
         else:
-            self.serial_list.current(0)
+            self.serial_combobox.current(0)
 
     def get_firmware_file_path_handler(self):
         firmware_file_path = filedialog.askopenfilename(title='请选择文件')
@@ -87,16 +118,16 @@ class QuecView(tk.Frame):
 
     def get_port_from_user_choose(self):
         # TODO: 用户指定烧录串口
-        return self.serial_list.get().split('-')[0]
+        return self.serial_combobox.get().split('-')[0]
 
     def download_firmware_handler(self):
         logger.info('enter download_firmware_handler method.')
 
-        self.button1.config(state=tk.DISABLED)
-        self.button2.config(state=tk.DISABLED)
+        self.fw_file_choose_button.config(state=tk.DISABLED)
+        self.fw_download_button.config(state=tk.DISABLED)
         self.bar["value"] = 0
-        self.progress_text_var.set("{}%".format(0))
-        self.log_text_var.set("就绪")
+        self.progress_stringvar.set("{}%".format(0))
+        self.log_stringvar.set("就绪")
         self.update()
 
         try:
@@ -108,12 +139,12 @@ class QuecView(tk.Frame):
             logger.info('comport: {}'.format(comport))
             for data in download_firmware_api(firmware_file_path, comport):
                 if data == "RESET":
-                    self.log_text_var.set('请重启板子，按RESET')
+                    self.log_stringvar.set('请重启板子，按RESET')
                     self.update()
                     continue
-                self.progress_text_var.set("{}%".format(data))
+                self.progress_stringvar.set("{}%".format(data))
                 self.bar["value"] = data
-                self.log_text_var.set('正在下载中')
+                self.log_stringvar.set('正在下载中')
                 self.update()
         except Exception as e:
             messagebox.showerror(
@@ -128,9 +159,9 @@ class QuecView(tk.Frame):
                 master=self
             )
         finally:
-            self.log_text_var.set('已完成')
-            self.button1.config(state=tk.ACTIVE)
-            self.button2.config(state=tk.ACTIVE)
+            self.log_stringvar.set('已完成')
+            self.fw_file_choose_button.config(state=tk.ACTIVE)
+            self.fw_download_button.config(state=tk.ACTIVE)
 
     def download_firmware_thread_worker(self):
         worker = Thread(target=self.download_firmware_handler)
