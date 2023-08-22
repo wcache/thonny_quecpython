@@ -1,8 +1,8 @@
 Metadata-Version: 2.1
 Name: thonny-quecpython
-Version: 0.1.0
-Summary: quecpython programing kits
-Home-page: http://github.com/quecpython
+Version: 0.1.2
+Summary: quecpython programing kits for thonny
+Home-page: https://github.com/QuecPython/thonny-quecpython
 Author: dustin.wei
 Author-email: dustin.wei@quectel.com
 License: MIT License
@@ -12,6 +12,24 @@ Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Requires-Python: >=3.7
-Description-Content-Type: text/markdown
+Description-Content-Type: text/x-rst
 
-# thonny_quecpython
+News
+====
+
+- June 2023: thonny-quecpython 0.1.1 released! (for those -- and only those -- who use Python >= 3.7).
+
+
+Overview
+========
+
+Provides a programing Kits of QuecPython for Thonny.It is pure Python and works on
+Python 3.7+.
+
+Install most recent stable with "pip install thonny-quecpython".
+
+Useful links:
+
+- Project on PyPI: https://pypi.org/project/thonny-quecpython/
+- The documentation for latest code is at: https://github.com/QuecPython/thonny-quecpython/blob/master/README.md
+

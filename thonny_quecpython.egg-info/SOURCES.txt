@@ -1,4 +1,4 @@
-README.md
+README.rst
 setup.py
 thonny_quecpython.egg-info/PKG-INFO
 thonny_quecpython.egg-info/SOURCES.txt

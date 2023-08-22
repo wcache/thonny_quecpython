@@ -12,7 +12,6 @@ class BaseApi(object):
 
     # status code
     OK = 0x00
-    ERROR = 0x01
     EXIT = 0x02
 
     # transmission payload
@@ -28,16 +27,10 @@ class BaseApi(object):
             payload=self.Payload(code=self.OK, data=data, exec=None)
         )
 
-    def error(self, e):
+    def exit(self, exec_=None):
         pub.sendMessage(
             self.UPDATE_TOPIC,
-            payload=self.Payload(code=self.ERROR, data=None, exec=e)
-        )
-
-    def exit(self):
-        pub.sendMessage(
-            self.UPDATE_TOPIC,
-            payload=self.Payload(code=self.EXIT, data=None, exec=None)
+            payload=self.Payload(code=self.EXIT, data=None, exec=exec_)
         )
 
     def run(self):
@@ -47,24 +40,26 @@ class BaseApi(object):
         try:
             self.run()
         except Exception as e:
-            self.error(e)
-        finally:
+            self.exit(exec_=e)
+        else:
             self.exit()
 
 
 class DownLoadFWApi(BaseApi):
     UPDATE_TOPIC = 'UPDATE_PROGRESS'
 
-    def __init__(self, firmware_file_path, comport):
+    def __init__(self, firmware_file_path, com_info):
         self.firmware_file_path = firmware_file_path
-        self.comport = comport
+        self.com_info = com_info
 
     def run(self):
-        logger.info('enter download_firmware_api function. args: {}'.format((self.firmware_file_path, self.comport)))
-        fw_download_handler = FwDownloadHandler(self.firmware_file_path, self.comport)
+        logger.info('enter download_firmware_api function. args: {}'.format((self.firmware_file_path, self.com_info)))
+        fw_download_handler = FwDownloadHandler(self.firmware_file_path, self.com_info)
         for data in fw_download_handler.download():
             self.emit(data)
 
-    def error(self, e):
-        error_message = '{}\nsee log: {}'.format(str(e), DownloadLogFile.log_file_path)
-        super().error(Exception(error_message))
+    def exit(self, exec_=None):
+        if exec_ is not None:
+            error_message = '{}\nsee log: {}'.format(str(exec_), DownloadLogFile.log_file_path)
+            exec_ = Exception(error_message)
+        super().exit(exec_=exec_)

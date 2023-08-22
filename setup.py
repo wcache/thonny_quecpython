@@ -2,23 +2,29 @@ from setuptools import setup, find_packages
 
 
 def readme():
-    with open('README.md', encoding='utf-8') as f:
+    with open('README.rst', encoding='utf-8') as f:
         content = f.read()
     return content
 
 
+def get_version():
+    with open('VERSION', encoding='utf-8') as f:
+        version = f.read()
+    return version
+
+
 setup(
     name='thonny-quecpython',
-    version='0.1.0',
-    description='quecpython programing kits',
+    version=get_version(),
+    description='quecpython programing kits for thonny',
     long_description=readme(),
-    long_description_content_type='text/markdown',
+    long_description_content_type='text/x-rst',
     python_requires='>=3.7',
     license="MIT License",
     author='dustin.wei',
     author_email='dustin.wei@quectel.com',
     keywords=["QuecPython", "quecpython", "QuecPython Kits", "quecpython kits"],
-    url='http://github.com/quecpython',
+    url='https://github.com/QuecPython/thonny-quecpython',
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
